@@ -1,0 +1,50 @@
+Este es el codigo:
+
+------------------------------------------------------------------------------
+import RPi.GPIO as GPIO
+import time
+
+# Usar numeración física de los pines (1 al 40)
+GPIO.setmode(GPIO.BOARD)
+
+# Definimos el pin físico donde está conectado el pulsador
+# Por ejemplo, si usás el pin físico 11 (que es GPIO17)
+PULSADOR = 11
+
+# Configurar el pin como entrada con resistencia pull-up interna
+GPIO.setup(PULSADOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+print("Esperando pulsador... (Ctrl+C para salir)")
+
+try:
+    while True:
+        if GPIO.input(PULSADOR) == GPIO.LOW:  # Pulsado
+            print("1")
+            time.sleep(0.3)  # Evita rebote
+except KeyboardInterrupt:
+    print("\nPrograma terminado")
+finally:
+    GPIO.cleanup()
+------------------------------------------------------------------------------
+
+Explicacion de partes
+
+GPIO.setup(PULSADOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+PULSADOR: es el número del pin que estás usando (por ejemplo, 11 si estás en modo BOARD).
+GPIO.IN: indica que ese pin se usará como entrada (para leer si el botón está presionado).
+pull_up_down=GPIO.PUD_UP: esto activa una resistencia interna pull-up en la Raspberry.
+
+¿Qué es una "resistencia pull-up"?
+
+Cuando no estás presionando el botón, el pin no está conectado ni a 3.3V ni a GND, y eso puede causar errores en la lectura (el estado sería "flotante").
+
+Para evitarlo, usamos una resistencia interna pull-up que conecta el pin ligeramente a 3.3V.
+
+Así:
+
+    Cuando el botón NO está presionado, el pin lee 1 (HIGH).
+
+    Cuando el botón SÍ está presionado, se conecta a GND y el pin lee 0 (LOW).
+
+🧠 Entonces, el botón se detecta cuando el pin pasa de 1 a 0.
